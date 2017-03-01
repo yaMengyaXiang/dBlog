@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dreamlearner.blog.dao.BlogDao">
+
+	<resultMap type="Blog" id="blogRM">
+		<id column="blog_id" property="blogId"/>
+		<result column="title" property="title"/>
+		<result column="content" property="content"/>
+		<result column="publish_date" property="publishDate"/>
+		<result column="key_word" property="keyWord"/>
+		<result column="click_hit" property="clickHit"/>
+		<result column="reply_hit" property="replyHit"/>
+		<result column="summary" property="summary"/>
+	</resultMap>
+	
+	<resultMap type="Blog" id="blogBloggerRM" extends="blogRM">
+		<!-- 对一 -->
+		<association property="blogger" javaType="Blogger">
+			<id column="blogger_id" property="bloggerId"/>
+			<result column="username" property="username"/>
+			<result column="password" property="password"/>
+			<result column="nick_name" property="nickName"/>
+			<result column="signature" property="signature"/>
+			<result column="description" property="description"/>
+			<result column="avatar" property="avatar"/>
+		</association>
+	</resultMap>
+	<resultMap type="Blog" id="blogTypeRM" extends="blogRM">
+		<!-- 对一 -->
+		<association property="blogType" javaType="BlogType">
+			<id column="type_id" property="typeId"/>
+			<result column="type_name" property="typeName"/>
+			<result column="description" property="description"/>
+		</association>
+	</resultMap>
+
+	<resultMap type="Blog" id="allRM" extends="blogRM">
+		<!-- 对一 -->
+		<association property="blogger" javaType="Blogger">
+			<id column="blogger_id" property="bloggerId"/>
+			<result column="username" property="username"/>
+			<result column="password" property="password"/>
+			<result column="nick_name" property="nickName"/>
+			<result column="signature" property="signature"/>
+			<result column="description" property="description"/>
+			<result column="avatar" property="avatar"/>
+		</association>
+		
+		<!-- 对一 -->
+		<association property="blogType" javaType="BlogType">
+			<id column="type_id" property="typeId"/>
+			<result column="type_name" property="typeName"/>
+			<result column="description" property="description"/>
+		</association>
+		
+	</resultMap>
+
+	<!-- sql片段 -->
+	<sql id="cols">
+		blog_id, title, content, publish_date, blogger_id, type_id, key_word, click_hit, reply_hit, summary
+	</sql>
+
+	<insert id="insertBlog" parameterType="Blog">
+		INSERT INTO blog (<include refid="cols"/>)
+		VALUES 
+		(#{blogId}, #{title}, #{content}, #{publishDate}, #{blogger.bloggerId}, #{blogType.typeId}, #{keyWord}, #{clickHit}, #{replyHit}, #{summary})
+	</insert>
+	
+	<update id="updateBlog" parameterType="Blog">
+		UPDATE blog 
+		<set>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="content != null">
+				content = #{content},
+			</if>
+			<if test="publishDate != null">
+				publish_date = #{publishDate},
+			</if>
+			<if test="blogger != null">
+				blogger_id = #{blogger.bloggerId},
+			</if>
+			<if test="blogType != null">
+				type_id = #{blogType.typeId},
+			</if>
+			<if test="keyWord != null">
+				key_word = #{keyWord},
+			</if>
+			<if test="clickHit != null">
+				click_hit = #{clickHit},
+			</if>
+			<if test="replyHit != null">
+				reply_hit = #{replyHit},
+			</if>
+			<if test="summary != null">
+				summary = #{summary},
+			</if>
+		</set>
+		<where>
+			<if test="blogId != null">
+				blog_id = #{blogId}
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteBlog" parameterType="Long">
+		DELETE FROM blog WHERE blog_id = #{blogId}
+	</delete>
+	
+	<select id="queryBlogById" parameterType="Long" resultMap="blogRM">
+		SELECT blog_id, title, content, publish_date, key_word, click_hit, reply_hit, summary FROM blog
+		WHERE blog_id = #{blogId}	
+	</select>
+	
+	<select id="queryBlogsByTitle" parameterType="String" resultMap="blogRM">
+		SELECT blog_id, title, content, publish_date, key_word, click_hit, reply_hit, summary FROM blog
+		WHERE title LIKE CONCAT('%', #{title}, '%')
+	</select>
+	
+	<select id="queryBlogsByKeyWordWithPage" parameterType="Map" resultMap="blogBloggerRM">
+		SELECT 
+			blogger.username, blog_id, blogger.blogger_id, publish_date, title 
+		from blogger
+		INNER JOIN
+			(SELECT 
+				blog_id, blogger_id, publish_date, title 
+			FROM blog
+			WHERE content LIKE CONCAT('%', #{keyWord}, '%')
+			) b
+		ON blogger.blogger_id = b.blogger_id
+		ORDER BY blog_id DESC
+		LIMIT #{startIndex}, #{pageSize}
+	</select>
+	
+	<select id="queryLatestBlogsByPage" parameterType="com.dreamlearner.blog.util.Page" resultMap="blogBloggerRM">
+		SELECT 
+			blogger.username, blog_id, blogger.blogger_id, publish_date, title 
+		from blogger
+		INNER JOIN
+			(SELECT blog_id, blogger_id, publish_date, title FROM blog) b
+		ON blogger.blogger_id = b.blogger_id
+		ORDER BY blog_id DESC
+		LIMIT #{startIndex}, #{pageSize}
+	</select>
+	
+	<select id="queryAllBlogs" resultMap="blogRM" parameterType="Integer">
+		SELECT 
+			blog_id, title, content, publish_date, key_word, click_hit, reply_hit, summary 
+		FROM blog
+		WHERE blogger_id = #{bloggerId} 
+	</select>
+	
+	<select id="queryAllBlogsWithPage" resultMap="blogTypeRM" parameterType="Map">
+		SELECT 
+			blog_id, title, content, publish_date, key_word, click_hit, reply_hit, summary, type_id 
+		FROM blog
+		WHERE blogger_id = #{bloggerId} 
+		LIMIT #{startIndex}, #{pageSize}
+	</select>
+	
+	<select id="queryBlogCount" resultType="Integer">
+		SELECT count(1) FROM blog
+	</select>
+	
+	<select id="queryMyBlogCount" resultType="Integer" parameterType="Integer">
+		SELECT count(1) FROM blog
+		WHERE blogger_id = #{bloggerId}
+	</select>
+	
+	<select id="queryBlogCountByKeyWord" parameterType="String" resultType="Integer">
+		SELECT count(1) FROM blog
+		WHERE content LIKE CONCAT('%', #{keyWord}, '%')
+	</select>
+	
+	<select id="queryBlogDetailInfo" parameterType="Long" resultMap="allRM">
+		SELECT 
+			blog_type.type_id, type_name, 
+		    blogger_id, username, nick_name, signature, avatar, 
+			blog_id, title, content, publish_date, key_word, click_hit, reply_hit
+		FROM blog_type 
+		INNER JOIN 
+			(SELECT 
+				blogger.blogger_id, username, nick_name, signature, avatar, 
+				blog_id, title, content, publish_date, type_id, key_word, click_hit, reply_hit
+			FROM blogger
+			INNER JOIN
+				(SELECT 
+					blog_id, title, content, publish_date, blogger_id, type_id, key_word, click_hit, reply_hit 
+				FROM blog 
+				WHERE blog_id = #{blogId}
+				) b
+			ON blogger.blogger_id = b.blogger_id
+			) bb
+		ON blog_type.type_id = bb.type_id
+	</select>
+	
+	<select id="queryBlogsTopClick" parameterType="Integer" resultMap="blogRM">
+		SELECT blog_id, title FROM blog
+		ORDER BY click_hit DESC
+		LIMIT 0, #{clickRankNum}
+	</select>
+	
+	<select id="queryBlogsLatestComment" parameterType="Integer" resultMap="blogRM">
+		SELECT blog.blog_id, title FROM blog 
+		INNER JOIN 
+			(SELECT 
+				DISTINCT blog_id 
+			FROM comment 
+			ORDER BY comment_id DESC 
+			LIMIT 0, #{latestCommentNum}
+			) bc
+		 ON blog.blog_id = bc.blog_id
+	</select>
+	
+	<select id="queryNextBlog" parameterType="Map" resultMap="blogRM">
+		SELECT b3.blog_id, b3.title, b3.publish_date FROM blog b3
+		WHERE b3.publish_date = 
+		(
+			SELECT MIN(b2.publish_date) min_date FROM blog b2
+			INNER JOIN
+				(SELECT 
+					blogger_id, publish_date 
+				FROM blog 
+				WHERE blogger_id = #{bloggerId} 
+				AND blog_id = #{blogId}
+				) b1
+			ON b1.blogger_id = b2.blogger_id
+			<![CDATA[ WHERE b2.publish_date > b1.publish_date ]]>
+		)
+		
+		<!--  
+		SELECT 
+			b2.blog_id, b2.title, b2.publish_date, b1.publish_date pdate 
+		FROM blog b2
+		INNER JOIN
+			(SELECT 
+				blogger_id, publish_date 
+			FROM blog 
+			WHERE blogger_id = #{bloggerId} 
+			AND blog_id = #{blogId}
+			) b1
+    	ON b2.blogger_id = b1.blogger_id
+    	<![CDATA[ HAVING UNIX_TIMESTAMP(b2.publish_date) > UNIX_TIMESTAMP(pdate) ]]>
+    	ORDER BY UNIX_TIMESTAMP(b2.publish_date) ASC
+    	LIMIT 1
+    	 -->
+	</select>
+	
+	<select id="queryPreviousBlog" parameterType="Map" resultMap="blogRM">
+		<!-- SELECT b3.blog_id, b3.title, b3.publish_date FROM blog b3
+		WHERE b3.publish_date = 
+		(
+			SELECT MAX(b2.publish_date) max_date FROM blog b2
+			INNER JOIN
+				(SELECT 
+					blogger_id, publish_date 
+				FROM blog 
+				WHERE blogger_id = #{bloggerId} 
+				AND blog_id = #{blogId}
+				) b1
+			ON b1.blogger_id = b2.blogger_id
+			WHERE b2.publish_date &lt; b1.publish_date
+		)
+		 -->
+		SELECT 
+			b2.blog_id, b2.title, b2.publish_date, b1.publish_date pdate 
+		FROM blog b2
+		INNER JOIN
+			(SELECT 
+				blogger_id, publish_date 
+			FROM blog 
+			WHERE blogger_id = #{bloggerId} 
+			AND blog_id = #{blogId}
+			) b1
+    	ON b2.blogger_id = b1.blogger_id
+    	HAVING UNIX_TIMESTAMP(b2.publish_date) &lt; UNIX_TIMESTAMP(pdate)
+    	ORDER BY UNIX_TIMESTAMP(b2.publish_date) DESC
+    	LIMIT 1
+	</select>
+	
+</mapper>

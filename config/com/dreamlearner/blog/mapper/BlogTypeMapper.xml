@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dreamlearner.blog.dao.BlogTypeDao">
+
+	<resultMap type="BlogType" id="blogTypeRM">
+		<id column="type_id" property="typeId"/>
+		<result column="type_name" property="typeName"/>
+		<result column="description" property="description"/>
+	</resultMap>
+
+	<!-- sql片段 -->
+	<sql id="cols">
+		type_id, type_name, description
+	</sql>
+
+	<insert id="insertBlogType" parameterType="BlogType">
+		INSERT INTO blog_type (<include refid="cols"/>)
+		VALUES (#{typeId}, #{typeName}, #{description})
+	</insert>
+
+	<update id="updateBlogType" parameterType="BlogType">
+		UPDATE blog_type 
+		<set>
+			<if test="typeName != null">
+				type_name = #{typeName},
+			</if>
+			<if test="description != null">
+				description = #{description},
+			</if>
+		</set>
+		<where>
+			type_id = #{typeId}
+		</where>
+	</update>
+	
+	<delete id="deleteBlogType" parameterType="Integer">
+		DELETE FROM blog_type WHERE type_id = #{typeId}
+	</delete>
+	
+	<delete id="deleteBlogTypes" parameterType="Integer">
+		DELETE FROM blog_type 
+		WHERE type_id IN 
+		(
+			<foreach collection="array" separator="," item="typeId"> <!-- Array不行，要array才行 -->
+				#{typeId}
+			</foreach>
+		)
+	</delete>
+
+	<select id="queryBlogType" resultMap="blogTypeRM" parameterType="Integer">
+		SELECT <include refid="cols"/> FROM blog_type
+		WHERE type_id = #{typeId}
+	</select>
+	
+	<select id="queryBlogTypeCount" resultType="Integer">
+		SELECT count(1) FROM blog_type
+	</select>
+	
+	<select id="queryAllBlogTypes" resultMap="blogTypeRM">
+		SELECT <include refid="cols"/> FROM blog_type
+	</select>
+	
+	<select id="queryAllBlogTypesWithPage" parameterType="Map" resultMap="blogTypeRM">
+		SELECT <include refid="cols"/> FROM blog_type
+		LIMIT #{startIndex}, #{pageSize}
+	</select>
+	
+</mapper>

@@ -1,0 +1,129 @@
+body {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.data-list {
+	background-color: #fdfdfd;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	margin-bottom: 10px;
+}
+
+.data-list-title {
+	border-bottom: 1px solid #e5e5e5;
+	font-size: 16px;
+	font-weight: bold;
+	padding-bottom: 10px;
+	padding-top: 5px;
+}
+
+.data-list-title img {
+	margin-top: 2px;
+	vertical-align: top;
+}
+
+.blog-title {
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	margin-top: 20px;
+}
+
+.blog-info {
+	font-size: 13px;
+	text-align: center;
+	margin-top: 20px;
+}
+
+.blog-content {
+	margin-top: 40px;
+	padding-bottom: 30px;
+}
+
+.blog-keyWord {
+	margin-top: 20px;
+	padding-bottom: 30px;
+	padding-left: 30px;
+}
+
+.blog-keyWord a {
+	color: black;
+	font-style: italic;
+	padding-left: 20px;
+}
+
+.blog-prevAndNext-blog {
+	border-top: 1px dotted black;
+	padding: 10px;
+}
+
+.blog-prevAndNext-blog p {
+	margin: 0 0 10px;
+}
+
+.blog-comments {
+	padding: 10px;
+}
+
+.blog-comment {
+	border-bottom: 1px dotted gray;
+	margin-bottom: 5px;
+	margin-top: 15px;
+	padding-bottom: 15px;
+}
+
+.blog-publish-comment {
+	padding-bottom: 50px;
+	padding-top: 10px;
+}
+
+.verCode {
+	margin-top: 24px;
+}
+
+.publishCommentBtn {
+	margin-top: 15px;
+	text-align: right;
+}
+
+.avatar {
+	margin: 10px auto;
+	text-align: center;
+}
+
+.username {
+	text-align: center;
+}
+
+.signature {
+	text-align: center;
+}
+
+.blogger-info-table-tr {
+	height: 50px;
+}
+
+.avatar-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 250px;
+}
+
+#disable-div a {
+	margin-bottom: 10px;
+}
+
+.oneRow {
+	width: 95%;
+	height: 75px;
+	margin: 20px auto;
+	border-bottom: 1px solid #ccc;
+}
+
+/**********对bootstrap的modal样式进行重写**********/  
+.modal-dialog {  
+    margin: 200px auto;  
+}  

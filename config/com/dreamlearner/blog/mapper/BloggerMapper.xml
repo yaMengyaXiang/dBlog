@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dreamlearner.blog.dao.BloggerDao">
+
+	<resultMap type="Blogger" id="bloggerRM">
+		<id column="blogger_id" property="bloggerId"/>
+		<result column="username" property="username"/>
+		<result column="password" property="password"/>
+		<result column="nick_name" property="nickName"/>
+		<result column="signature" property="signature"/>
+		<result column="description" property="description"/>
+		<result column="avatar" property="avatar"/>
+	</resultMap>
+
+	<!-- sql片段 -->
+	<sql id="cols">
+		blogger_id, username, password, nick_name, signature, description, avatar
+	</sql>
+
+	<select id="queryBlogger" resultMap="bloggerRM" parameterType="Integer">
+		SELECT <include refid="cols"/> FROM blogger
+		WHERE blogger_id = #{bloggerId}
+	</select>
+	
+	<select id="queryBloggerByUsername" resultMap="bloggerRM" parameterType="String">
+		SELECT <include refid="cols"/> FROM blogger
+		WHERE username = #{username}
+	</select>
+	
+	<select id="queryBloggerByMap" resultMap="bloggerRM" parameterType="Map">
+		SELECT <include refid="cols"/> FROM blogger
+		<where>
+			<if test="bloggerId != null">
+				blogger_id = #{bloggerId}
+			</if>
+			<if test="username != null">
+				AND username = #{username}
+			</if>
+			<if test="password != null">
+				AND password = #{password}
+			</if>
+			<if test="nickName != null">
+				AND nick_name = #{nickName}
+			</if>
+			<if test="signature != null">
+				AND signature = #{signature}
+			</if>
+			<if test="description != null">
+				AND description = #{description}
+			</if>
+			<if test="avatar != null">
+				AND avatar = #{avatar}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateBlogger" parameterType="Blogger">
+		UPDATE blogger 
+		<set>
+			<if test="password != null">
+				password = #{password},
+			</if>
+			<if test="nickName != null">
+				nick_name = #{nickName},
+			</if>
+			<if test="signature != null">
+				signature = #{signature},
+			</if>
+			<if test="description != null">
+				description = #{description},
+			</if>
+			<if test="avatar != null">
+				avatar = #{avatar}
+			</if>
+		</set>
+		<where>
+			blogger_id = #{bloggerId}
+		</where>
+	</update>
+	
+</mapper>
