@@ -90,12 +90,8 @@
 					<div class="panel-body">
 						<ul class="list-group">
 							<li class="list-group-item">
-								<a url="${pageContext.request.contextPath}/blog/toWriteBlog.action"  
+								<a id="aToWriteBlog" url="${pageContext.request.contextPath}/blog/toWriteBlog.action"  
 								href="javascript:void(0);" onclick="linkMain(this)">撰写博客</a>
-							</li>
-							<li class="list-group-item">
-								<a url="${pageContext.request.contextPath}/blog/toEditBlog.action" 
-								href="javascript:void(0);" onclick="linkMain(this)">更新博客</a>
 							</li>
 							<li class="list-group-item">
 								<a url="${pageContext.request.contextPath}/blog/toMyBlog.action"   
@@ -135,8 +131,8 @@
 				<div id="collapseThree" class="panel-collapse collapse">
 					<div class="panel-body">
 						<ul class="list-group">
-							<li class="list-group-item"><a href="javascript:void(0);" onclick="linkMain(this)">浏览评论</a></li>
-							<li class="list-group-item"><a href="javascript:void(0);" onclick="linkMain(this)">删除评论</a></li>
+							<li class="list-group-item"><a href="javascript:void(0);" onclick="alert('很抱歉，暂未开发！');">浏览评论</a></li>
+							<li class="list-group-item"><a href="javascript:void(0);" onclick="alert('很抱歉，暂未开发！');">删除评论</a></li>
 						</ul>
 					</div>
 				</div>

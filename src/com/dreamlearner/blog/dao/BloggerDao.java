@@ -22,11 +22,11 @@ public interface BloggerDao {
 	public List<Blogger> queryBloggerByMap(Map<String, Object> query);
 	
 	/**
-	 * 通过用户名查找博主
-	 * @param username
+	 * 用户登录
+	 * @param query
 	 * @return
 	 */
-	public Blogger queryBloggerByUsername(String username);
+	public List<Blogger> userLogin(Map<String, String> query);
 	
 	/**
 	 * 更新博主信息

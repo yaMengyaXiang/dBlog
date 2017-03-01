@@ -36,11 +36,11 @@ public class BloggerController {
 	
 	@RequestMapping(value = "/login.action")
 	public String login(String username, String password, HttpServletRequest request) {
-		Map<String, Object> query = new HashMap<String, Object>(2);
+		Map<String, String> query = new HashMap<String, String>(2);
 		query.put("username", username);
 		// md5加密，BASE64编码后的密码
 		query.put("password", EncryptUtil.encrypt(password));
-		List<Blogger> bloggers = bloggerService.queryBloggerByMap(query);
+		List<Blogger> bloggers = bloggerService.userLogin(query);
 		
 		if (null != bloggers && bloggers.size() != 0) {
 			Blogger blogger = bloggers.get(0);

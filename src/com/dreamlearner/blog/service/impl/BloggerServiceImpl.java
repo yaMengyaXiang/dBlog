@@ -26,8 +26,8 @@ public class BloggerServiceImpl implements BloggerService {
 		return this.bloggerDao.queryBloggerByMap(query);
 	}
 
-	public Blogger queryBloggerByUsername(String username) {
-		return this.bloggerDao.queryBloggerByUsername(username);
+	public List<Blogger> userLogin(Map<String, String> query) {
+		return this.bloggerDao.userLogin(query);
 	}
 
 	@Transactional

@@ -1,5 +1,7 @@
 package com.dreamlearner.blog.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -99,6 +103,28 @@ public class BlogController {
 			try {
 				response.getOutputStream().print(0);
 			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+	}
+	
+	@RequestMapping("/updateBlog.action")
+	public void updateBlog(Blog blog, HttpServletResponse response) {
+		
+		Long blogId = blog.getBlogId();
+		Blog b = blogService.queryBlogById(blogId);
+		blog.setClickHit(b.getClickHit());
+		blog.setReplyHit(b.getReplyHit());
+		
+		blogService.updateBlog(blog);
+		
+		try {
+			response.getOutputStream().print(1);
+		} catch (IOException e) {
+			try {
+				response.getOutputStream().print(0);
+			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -353,13 +379,32 @@ public class BlogController {
 	}
 	
 	@RequestMapping("/toEditBlog.action")
-	public String toEditBlog(Long blogId, Model model) {
+	public String toEditBlog(Long blogId, Integer typeId, Model model) {
 		
 		Blog blog = blogService.queryBlogById(blogId);
 		
+		BlogType blogType = blogTypeService.queryBlogType(typeId);
+		
+		blog.setBlogType(blogType);
+		
+		List<BlogType> blogTypes = blogTypeService.queryAllBlogTypes();
+		
 		model.addAttribute("blog", blog);
+		model.addAttribute("blogTypes", blogTypes);
 		
 		return "WEB-INF/page/blog/editBlog.jsp";
+	}
+	
+	@RequestMapping("/getBlogById.action")
+	public String getBlogById(Long blogId, HttpServletResponse response) throws Exception {
+		Blog blog = blogService.queryBlogById(blogId);
+		JSONObject jsonObj = net.sf.json.JSONObject.fromObject(blog);
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out=response.getWriter();
+		out.println(jsonObj.toString());
+		out.flush();
+		out.close();
+		return null;
 	}
 	
 }

@@ -24,9 +24,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE blogger_id = #{bloggerId}
 	</select>
 	
-	<select id="queryBloggerByUsername" resultMap="bloggerRM" parameterType="String">
+	<select id="userLogin" resultMap="bloggerRM" parameterType="Map">
 		SELECT <include refid="cols"/> FROM blogger
-		WHERE username = #{username}
+		WHERE username = #{username} AND password = #{password}
 	</select>
 	
 	<select id="queryBloggerByMap" resultMap="bloggerRM" parameterType="Map">

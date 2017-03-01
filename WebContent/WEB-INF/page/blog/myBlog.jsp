@@ -11,6 +11,9 @@
 	<table class="table table-hover">
 		<thead>
 			<tr>
+				<th nowrap="nowrap">
+					<input type="checkbox" id="selectAll" >
+				</th>
 				<th nowrap="nowrap">编号</th>
 				<th nowrap="nowrap">标题</th>
 				<th nowrap="nowrap">概要</th>
@@ -20,6 +23,9 @@
 		<tbody>
 			<c:forEach items="${pageBlogs.results}" var="blog" varStatus="vs">
 				<tr>
+					<td>
+						<input type="checkbox" name="blogId" value="${blog.blogId}">
+					</td>
 					<td>${vs.count }</td>
 					<td title="${blog.title}">
 						<a href="${pageContext.request.contextPath}/blog/detail.action?blogId=${blog.blogId}" 
@@ -38,7 +44,7 @@
 							...
 						</c:if>
 					</td>
-					<td title="${blog.blogType.typeName }">${blog.blogType.typeName }</td>
+					<td title="${blog.blogType.typeName }" typeId="${blog.blogType.typeId}">${blog.blogType.typeName }</td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -78,9 +84,103 @@
 		
 	</ul>
 </div>
+
+<div style="text-align: center;">
+	<a href="javascript:void(0);" onclick="addBlogBtnClick()" class="btn btn-primary" style=" margin: 0 20px;">撰写博客</a>
+	
+	<a href="javascript:void(0);" onclick="editBlogBtnClick()" class="btn btn-primary" style=" margin: 0 20px;">更新博客</a>
+	
+	<a href="javascript:void(0);" onclick="deleteBlogBtnClick()" class="btn btn-primary" style=" margin: 0 20px;">删除博客</a>
+</div>
+
  
  	<script type="text/javascript">
 	
+ 	function addBlogBtnClick() {
+		$("#aToWriteBlog").trigger("click");
+ 	}
+	
+	function editBlogBtnClick() {
+		if (checkedLength() == 0) {
+			alert("请选择一行！！！");
+			return;
+		} else if (checkedLength() > 1) {
+			alert("请只选择一行！！！");
+			return;
+		}
+		
+		var $checkedObj = $(":checkbox[name='blogId']:checked");
+		var blogId = $checkedObj.val();
+		
+		var typeIdTd = $checkedObj.parent().siblings("td[typeId]");
+		var typeId = typeIdTd.attr("typeId");
+		var url = "${pageContext.request.contextPath}/blog/toEditBlog.action";
+		
+		var param = {
+				"typeId": typeId, 
+				"blogId": blogId
+		};
+		
+		$.post(url, param, function(data) {
+			$("#mainContentDiv").html(data);
+		});
+		
+	}
+	
+	var blogIdsToDelete;
+	
+	function deleteBlogBtnClick() {
+		if (checkedLength() == 0) {
+			alert("请至少选择一行！！！");
+			return;
+		}
+		
+		var $checkedObjs = $(":checkbox[name='blogId']:checked");
+		blogIdsToDelete = new Array($checkedObjs.length);
+		var j = 0;
+		$checkedObjs.each(function() {
+			var blogId = $(this).val();
+			blogIdsToDelete[j++] = blogId;
+		});
+		
+		// ajax删除
+		
+	}
+	
+	// 处于选中的checkbox的数量
+	function checkedLength() {
+		var blogIds = $(":checkbox[name='blogId']:checked");
+		return blogIds.length;
+	}
+	
+	// 判断是否一个都没选中
+	function checkForChecked() {
+		return checkedLength() != 0;
+	}
+	
+	// 全选checkbox
+	$("#selectAll").unbind("click");
+	$("#selectAll").bind("click", function() {
+		// jquery 1.6之后，checkbox的状态在加载完成页面时已经初始化，并且不会改变状态，
+		// 所以下面的方法会一直返回undefined
+		// var flag = $("#selectAll").attr('checked');
+		// 解决方法是用prop()
+		
+		$(":checkbox[name='blogId']").prop("checked", $(this).prop("checked"));
+		
+	});
+	
+	// 监听点击事件
+	$(":checkbox[name='blogId']").unbind("click");
+	$(":checkbox[name='blogId']").bind("click", function() {
+		var checkedLen = checkedLength(); 
+		var allCheckboxLength = $(":checkbox[name='blogId']").length;
+		$("#selectAll").prop("checked", checkedLen == allCheckboxLength);
+		
+	});
+	
+ 	
+ 	
 		function preAndNextPage(linkObj, pageNo) {
 			var $linkObj = $(linkObj);
 			var url = $linkObj.attr("url");

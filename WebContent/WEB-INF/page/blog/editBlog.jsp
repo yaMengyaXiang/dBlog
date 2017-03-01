@@ -19,6 +19,7 @@
 			alert("请输入内容！");
 		}else{
 			var param = {
+				"blogId": "${blog.blogId}", 
 				'title':title,
 				'blogType.typeId':typeId,
 				'content':content,
@@ -28,27 +29,18 @@
 			var url = $("#url").attr("url");
 			$.post(url, param, function(data) {
 				if(data == 1){
-					alert("博客发布成功！");
-					resetValue();
+					alert("博客更新成功！");
 				}else{
-					alert("博客发布失败！");
+					alert("博客更新失败！");
 				}
 			});
 		}
 	}
 
-	// 重置数据
-	function resetValue(){
-		$("#title").val("");
-		$("#typeId").prop('selectedIndex', 0);
-		UE.getEditor('editor').setContent("");
-		$("#keyWord").val("");
-	}
-	
 </script>
 
 		
-	<div url="${pageContext.request.contextPath}/blog/saveBlog.action" id="url" 
+	<div url="${pageContext.request.contextPath}/blog/updateBlog.action" id="url" 
 		  style="padding: 10px; margin-top: 10px;">
 		  <div class="row">
 			  <div class="col-md-12">
@@ -90,7 +82,7 @@
 		 <div class="row">
 		 	<div class="col-md-9">
 		 		关键字：
-		 		<input type="text" id="keyWord" name="keyWord" ${blog.keyWord } style="width: 55%;"/>&nbsp;(多个关键字中间用空格隔开)
+		 		<input type="text" id="keyWord" name="keyWord" value="${blog.keyWord }" style="width: 55%;"/>&nbsp;(多个关键字中间用空格隔开)
 	 		</div>
 		 	<div class="col-md-3" style="text-align: right;">
 	 			<a href="javascript:void(0)" onclick="submitData()" class="btn btn-default" role="button" >更新博客</a>
@@ -105,7 +97,22 @@
 	    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，
 	    // 直接调用UE.getEditor('editor')就能拿到相关的实例
 	    var ue = UE.getEditor('editor');
-	
+	    
+	    ue.addListener("ready",function(){
+	        //通过ajax请求数据
+	        UE.ajax.request("${pageContext.request.contextPath}/blog/getBlogById.action",
+	            {
+	                method:"post",
+	                async : false,  
+	                data:{"blogId":"${blog.blogId}"},
+	                onsuccess:function(result){
+	                	result = eval("(" + result.responseText + ")"); 
+	       				UE.getEditor('editor').setContent(result.content);
+	                }
+	            }
+	        );
+	    });
+	    
 	    $("#editor").hide().delay(800).fadeIn();
 	</script>
 	

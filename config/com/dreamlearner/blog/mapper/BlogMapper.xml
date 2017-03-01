@@ -98,6 +98,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="summary != null">
 				summary = #{summary},
 			</if>
+			<if test="blogType != null">
+				type_id = #{blogType.typeId},
+			</if>
+			<if test="blogger != null">
+				blogger_id = #{blogger.bloggerId},
+			</if>
 		</set>
 		<where>
 			<if test="blogId != null">
