@@ -67,11 +67,6 @@ public class BlogServiceImpl implements BlogService {
 	}
 
 	@Override
-	public Integer queryMyBlogCount(Integer bloggerId) {
-		return this.blogDao.queryMyBlogCount(bloggerId);
-	}
-	
-	@Override
 	public Blog queryBlogDetailInfo(Long blogId) {
 		return this.blogDao.queryBlogDetailInfo(blogId);
 	}

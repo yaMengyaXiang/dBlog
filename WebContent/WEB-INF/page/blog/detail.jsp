@@ -169,7 +169,7 @@
 		                  <img src="${blog.blogger.avatar}" width="90%" height="90%">
 		              </div>
 		              <div class="username">
-		                  <a target="_blank" href="${pageContext.request.contextPath}/blogger/toBloggerInfo.action">${blog.blogger.username }</a>
+		                  ${blog.blogger.username }
 		              </div>
 		              <div class="signature">
 		                  (${blog.blogger.signature })

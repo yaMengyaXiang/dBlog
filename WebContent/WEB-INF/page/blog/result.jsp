@@ -13,7 +13,7 @@
 
 	<script type="text/javascript">
 	
-		function preAndNextLink(linkObj, pageNo) {
+		function searchPreAndNextLink(linkObj, pageNo) {
 			var $linkObj = $(linkObj);
 			var url = $linkObj.attr("url");
 			
@@ -21,21 +21,18 @@
 				return;				
 			}
 			var keyWord = $("input[name='keyWord']").val();
-			var param = {
-					"pageNo": pageNo, 
-					"keyWord": keyWord
-			};
 			
-			var checkUrl = "${pageContext.request.contextPath}/blog/checkPageNumByKeyWord.action";
-			$.post(checkUrl, param, function(data) {
-				if (data == "true") {
-					window.location.href = url + "&keyWord=" + encodeURI(keyWord);
-				}
-			});
+			var maxPageNum = $(".pagination:first").attr("maxPageNum");
+			
+			if (parseInt(pageNo) > parseInt(maxPageNum)) {
+				return;
+			}
+			
+			window.location.href = url + "&keyWord=" + encodeURI(keyWord);
 			
 		}
 		
-		function link(linkObj, pageNo) {
+		function searchLink(linkObj, pageNo) {
 			var $linkObj = $(linkObj);
 			var url = $linkObj.attr("url");
 			
@@ -71,27 +68,35 @@
                 </div>
                 </c:forEach>
             </div>
-            <div class="data_list" style="text-align: center;">
-                <ul class="pagination">
+            <div style="text-align: center;">
+            
+                <ul class="pagination" maxPageNum="${pageBlogs.totalPageNum}">
                 
                 	<li <c:if test="${pageBlogs.currentPage - 1 == 0}">class="disabled"</c:if>>
-                	<a url="${pageContext.request.contextPath}/blog/search.action?pageNo=${pageBlogs.currentPage-1}" 
-                		href="javascript:void(0);" onclick="preAndNextLink(this, ${pageBlogs.currentPage-1})">&lt;&lt;</a>
+                	<a 
+                	url="${pageContext.request.contextPath}/blog/search.action?pageNo=${pageBlogs.currentPage-1}" 
+                	href="javascript:void(0);" 
+                	onclick="searchPreAndNextLink(this, ${pageBlogs.currentPage-1})">&lt;&lt;</a>
                 	</li>
                 	
                 	<c:forEach items="${pageNums}" var="pageNum">
                 	
                 		<li <c:if test="${pageNum == pageBlogs.currentPage}">class="active"</c:if>>
-                		<a href="javascript:void(0);" onclick="link(this, ${pageNum})"
+                		<a 
+                		href="javascript:void(0);" 
+                		onclick="searchLink(this, ${pageNum})"
                 		url="${pageContext.request.contextPath}/blog/search.action?pageNo=${pageNum}">${pageNum}</a>
                 		</li>
                 	
                 	</c:forEach>
                 	
                 	<li <c:if test="${pageBlogs.currentPage + 1 > pageBlogs.totalPageNum}">class="disabled"</c:if>>
-                	<a url="${pageContext.request.contextPath}/blog/search.action?pageNo=${pageBlogs.currentPage+1}"
-                	href="javascript:void(0);" onclick="preAndNextLink(this, ${pageBlogs.currentPage+1})">&gt;&gt;</a>
+                	<a 
+                	url="${pageContext.request.contextPath}/blog/search.action?pageNo=${pageBlogs.currentPage+1}"
+                	href="javascript:void(0);" 
+                	onclick="searchPreAndNextLink(this, ${pageBlogs.currentPage+1})">&gt;&gt;</a>
                 	</li>
+                	
                 </ul>
             </div>
         </div>

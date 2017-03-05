@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dreamlearner.blog.entity.Blog;
 import com.dreamlearner.blog.entity.BlogType;
@@ -53,11 +52,10 @@ public class BlogController {
 		
 		// 总页数
 		int totalPageNum = 1;
-		if (totalResults % Constants.PAGE_SIZE == 0) {
-			totalPageNum = totalResults / Constants.PAGE_SIZE;
-		} else {
-			totalPageNum = totalResults / Constants.PAGE_SIZE + 1;
-		}
+		totalPageNum = 
+			totalResults % Constants.PAGE_SIZE == 0 ? 
+			totalResults / Constants.PAGE_SIZE :
+			totalResults / Constants.PAGE_SIZE + 1;
 		
 		pageNo = totalPageNum < pageNo ? totalPageNum : pageNo;
 		
@@ -180,29 +178,6 @@ public class BlogController {
 		return "WEB-INF/page/blog/detail.jsp";
 	}
 	
-	@RequestMapping(value = "/checkPageNum.action", produces = "text/html;charset=UTF-8")
-	@ResponseBody
-	public String checkPageNum(Integer pageNo) {
-		boolean canAccess = false;
-		
-		// 总记录数
-		Integer totalResults = blogService.queryBlogCount();
-	
-		pageNo = (pageNo == null || pageNo < 1) ? 1 : pageNo;
-		
-		// 总页数
-		int totalPageNum = 1;
-		if (totalResults % Constants.PAGE_SIZE == 0) {
-			totalPageNum = totalResults / Constants.PAGE_SIZE;
-		} else {
-			totalPageNum = totalResults / Constants.PAGE_SIZE + 1;
-		}
-		
-		canAccess = totalPageNum >= pageNo;
-		
-		return canAccess + "";
-	}
-
 	@RequestMapping("/search.action")
 	public String search(Integer pageNo, String keyWord, Model model) {
 		if (keyWord == null) {
@@ -215,11 +190,10 @@ public class BlogController {
 		
 		// 总页数
 		int totalPageNum = 1;
-		if (totalResults % Constants.PAGE_SIZE == 0) {
-			totalPageNum = totalResults / Constants.PAGE_SIZE;
-		} else {
-			totalPageNum = totalResults / Constants.PAGE_SIZE + 1;
-		}
+		totalPageNum = 
+			totalResults % Constants.PAGE_SIZE == 0 ? 
+			totalResults / Constants.PAGE_SIZE :
+			totalResults / Constants.PAGE_SIZE + 1;
 		
 		pageNo = totalPageNum < pageNo ? totalPageNum : pageNo;
 		
@@ -255,32 +229,6 @@ public class BlogController {
 		return "WEB-INF/page/blog/result.jsp";
 	}
 	
-	@RequestMapping(value = "/checkPageNumByKeyWord.action", produces = "text/html;charset=UTF-8")
-	@ResponseBody
-	public String checkPageNumByKeyWord(Integer pageNo, String keyWord) {
-		boolean canAccess = false;
-		
-		if (keyWord == null) {
-			keyWord = "";
-		}
-		
-		// 总记录数
-		Integer totalResults = blogService.queryBlogCountByKeyWord(keyWord);
-		pageNo = (pageNo == null || pageNo < 1) ? 1 : pageNo;
-		
-		// 总页数
-		int totalPageNum = 1;
-		if (totalResults % Constants.PAGE_SIZE == 0) {
-			totalPageNum = totalResults / Constants.PAGE_SIZE;
-		} else {
-			totalPageNum = totalResults / Constants.PAGE_SIZE + 1;
-		}
-		
-		canAccess = totalPageNum >= pageNo;
-		
-		return canAccess + "";
-	}
-	
 	@RequestMapping("/toWriteBlog.action")
 	public String toWriteBlog(HttpServletRequest request, Model model) {
 		Object blogger = request.getSession().getAttribute("currentUser");
@@ -303,28 +251,24 @@ public class BlogController {
 			return "null";
 		}
 		
-		Blogger b = (Blogger) blogger;
-		
 		// 总记录数
-		Integer totalResults = blogService.queryMyBlogCount(b.getBloggerId());
+		Integer totalResults = blogService.queryBlogCount();
 
 		pageNo = (pageNo == null || pageNo < 1) ? 1 : pageNo;
 		
 		// 总页数
 		int totalPageNum = 1;
-		if (totalResults % Constants.PAGE_SIZE == 0) {
-			totalPageNum = totalResults / Constants.PAGE_SIZE;
-		} else {
-			totalPageNum = totalResults / Constants.PAGE_SIZE + 1;
-		}
-		
+		totalPageNum = 
+			totalResults % Constants.PAGE_SIZE == 0 ? 
+			totalResults / Constants.PAGE_SIZE :
+			totalResults / Constants.PAGE_SIZE + 1;
+
 		pageNo = totalPageNum < pageNo ? totalPageNum : pageNo;
 		
 		Page<Blog> page = new Page<Blog>(pageNo, totalResults);
 		
 		Map<String, Integer> query = new HashMap<String, Integer>(3);
 		
-		query.put("bloggerId", b.getBloggerId());
 		query.put("startIndex", page.getStartIndex());
 		query.put("pageSize", page.getPageSize());
 		
@@ -349,35 +293,6 @@ public class BlogController {
 		return "WEB-INF/page/blog/myBlog.jsp";
 	}
 	
-	@RequestMapping(value = "/checkMyBlogPageNum.action", produces = "text/html;charset=UTF-8")
-	@ResponseBody
-	public String checkMyBlogPageNum(HttpServletRequest request, Integer pageNo) {
-		boolean canAccess = false;
-		//TODO 考虑写个切面判断用户是否登录
-		Object blogger = request.getSession().getAttribute("currentUser");
-		if (null == blogger) {
-			return "null";
-		}
-		
-		Blogger b = (Blogger) blogger;
-		// 总记录数
-		Integer totalResults = blogService.queryMyBlogCount(b.getBloggerId());
-	
-		pageNo = (pageNo == null || pageNo < 1) ? 1 : pageNo;
-		
-		// 总页数
-		int totalPageNum = 1;
-		if (totalResults % Constants.PAGE_SIZE == 0) {
-			totalPageNum = totalResults / Constants.PAGE_SIZE;
-		} else {
-			totalPageNum = totalResults / Constants.PAGE_SIZE + 1;
-		}
-		
-		canAccess = totalPageNum >= pageNo;
-		
-		return canAccess + "";
-	}
-	
 	@RequestMapping("/toEditBlog.action")
 	public String toEditBlog(Long blogId, Integer typeId, Model model) {
 		
@@ -398,9 +313,9 @@ public class BlogController {
 	@RequestMapping("/getBlogById.action")
 	public String getBlogById(Long blogId, HttpServletResponse response) throws Exception {
 		Blog blog = blogService.queryBlogById(blogId);
-		JSONObject jsonObj = net.sf.json.JSONObject.fromObject(blog);
+		JSONObject jsonObj = JSONObject.fromObject(blog);
 		response.setContentType("text/html;charset=utf-8");
-		PrintWriter out=response.getWriter();
+		PrintWriter out = response.getWriter();
 		out.println(jsonObj.toString());
 		out.flush();
 		out.close();

@@ -20,6 +20,12 @@ public class SystemController {
 	@Resource
 	private BlogService blogService;
 	
+	@RequestMapping("/admin/login.html")
+	public String toLogin() {
+		
+		return "redirect:/blogger/toLogin.action";
+	}
+	
 	@RequestMapping(value = "/index.html")
 	public String index(Integer pageNo) {
 		// 检查pageNo

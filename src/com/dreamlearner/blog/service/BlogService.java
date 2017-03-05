@@ -71,12 +71,6 @@ public interface BlogService {
 	public Integer queryBlogCount();
 	
 	/**
-	 * 查询某博主博客数量
-	 * @return
-	 */
-	public Integer queryMyBlogCount(Integer bloggerId);
-	
-	/**
 	 * 查看博客的详细信息
 	 * @param blogId
 	 * @return

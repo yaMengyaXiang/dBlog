@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +54,7 @@ public class BloggerController {
 	@RequestMapping("/logout.action")
 	public String logout(HttpServletRequest request) {
 		request.getSession().removeAttribute("currentUser");
-		return "index.jsp";
+		return "WEB-INF/page/blogger/login.jsp";
 	}
 	
 	@RequestMapping("/toBloggerInfo.action")
@@ -68,39 +67,6 @@ public class BloggerController {
 		return "WEB-INF/page/blogger/bloggerInfo.jsp";
 	}
 	
-	@RequestMapping(value = "/isImage.action", produces = "text/plain;charset=UTF-8")
-	@ResponseBody
-	public String isImage(MultipartFile avatar, HttpServletRequest request) {
-		if (!avatar.isEmpty()) {
-			String contentType = avatar.getContentType();
-			// 判断文件类型
-			if (FileUtil.ALLOW_TYPES.contains(contentType)) {
-				// 获取后缀，重命名
-				String newName = FileUtil.rename(avatar.getOriginalFilename());
-				// 上传到服务器
-				String uploadPath = request.getServletContext().getRealPath("/") + "static/userImages/";
-				
-				File uploadDirectory = new File(uploadPath);
-				if (!uploadDirectory.exists()) {
-					uploadDirectory.mkdirs();
-				}
-				try {
-					avatar.transferTo(new File(uploadPath, newName));
-					
-					String imageUrl = request.getContextPath() + "/static/upload/images/" + newName;
-			        System.out.println(imageUrl);
-			        // 返回文件名，用于显示图片在页面上
-			        return imageUrl;
-			        
-				} catch (Exception e) {
-					return "false";
-				}
-				
-			}
-		}
-		
-		return "false";
-	}
 	
 	@RequestMapping("/updateBlogger.action")
 	@ResponseBody
@@ -133,7 +99,6 @@ public class BloggerController {
 			
 		}
 		
-		//TODO 考虑写个切面判断用户是否登录
 		blogger.setAvatar(avatar);
 		
 		bloggerService.updateBlogger(blogger);

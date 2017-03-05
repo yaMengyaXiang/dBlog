@@ -60,7 +60,9 @@
                 </c:forEach>
             </div>
             
-            <jsp:include page="/WEB-INF/page/common/pagination.jsp"></jsp:include>
+            <div id="myPagination" style="text-align: center;" url="${pageContext.request.contextPath}/index.html">
+            	<jsp:include page="/WEB-INF/page/common/pagination.jsp"></jsp:include>
+            </div>
             
         </div>
         

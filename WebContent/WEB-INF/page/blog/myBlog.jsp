@@ -52,7 +52,7 @@
 </div>
 
 <div style="text-align: center;">
-	<ul class="pagination">
+	<ul class="pagination" maxPageNum="${pageBlogs.totalPageNum}">
 
 		<li
 			<c:if test="${pageBlogs.currentPage - 1 == 0}">class="disabled"</c:if>>
@@ -188,24 +188,19 @@
 			if ($linkObj.parent().hasClass("disabled")) {
 				return;				
 			}
-			var param = {
-					"pageNo": pageNo
-			};
+			var maxPageNum = $(".pagination:first").attr("maxPageNum");
 			
-			var checkUrl = "${pageContext.request.contextPath}/blog/checkMyBlogPageNum.action";
-			$.post(checkUrl, param, function(flag) {
-				if (flag == "null") {
+			if (parseInt(pageNo) > parseInt(maxPageNum)) {
+				return;
+			}
+			
+			// ajax请求
+			$.post(url, null, function(data) {
+				if ("null" == data) {
 					window.location.href = "${pageContext.request.contextPath}/admin/login.html";
-				} else if (flag == "true") {
-					// ajax请求
-					$.post(url, null, function(data) {
-						if ("null" == data) {
-							window.location.href = "${pageContext.request.contextPath}/admin/login.html";
-						} else {
-							$("#mainContentDiv").html(data);
-						}
-					});
-				} 
+				} else {
+					$("#mainContentDiv").html(data);
+				}
 			});
 			
 		}

@@ -163,17 +163,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT 
 			blog_id, title, content, publish_date, key_word, click_hit, reply_hit, summary, type_id 
 		FROM blog
-		WHERE blogger_id = #{bloggerId} 
 		LIMIT #{startIndex}, #{pageSize}
 	</select>
 	
 	<select id="queryBlogCount" resultType="Integer">
 		SELECT count(1) FROM blog
-	</select>
-	
-	<select id="queryMyBlogCount" resultType="Integer" parameterType="Integer">
-		SELECT count(1) FROM blog
-		WHERE blogger_id = #{bloggerId}
 	</select>
 	
 	<select id="queryBlogCountByKeyWord" parameterType="String" resultType="Integer">

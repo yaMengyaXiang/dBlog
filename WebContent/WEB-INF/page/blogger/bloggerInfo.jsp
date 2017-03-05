@@ -26,14 +26,6 @@
 	        		$("#userImg").attr("src", objUrl);
 	        	}
 	        	
-	        	/* $("#avatarForm").submit(function(data) {
-	        		if (data == "false") {
-	        			alert("上传失败！");
-	        		} else {
-	        			$("#userImg").attr("src", data);
-	        		}
-	        	});
-	        	 */
 	        });
 	        
 	    });
